@@ -172,7 +172,9 @@ void main() {
 }
 
 Future<(List<Asset>?, List<String>?, DateTime?)> _failDiff(
-        User user, DateTime time) =>
+  User user,
+  DateTime time,
+) =>
     Future.value((null, null, null));
 
 class MockHashService extends Mock implements HashService {}
