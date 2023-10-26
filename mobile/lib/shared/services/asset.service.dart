@@ -48,16 +48,22 @@ class AssetService {
     return changes;
   }
 
-  /// Returns `(null, null)` if changes are invalid -> requires full sync
-  Future<(List<Asset>? toUpsert, List<String>? toDelete)>
+  /// Returns `(null, null, null)` if changes are invalid -> requires full sync
+  Future<(List<Asset>? toUpsert, List<String>? toDelete, DateTime? time)>
       _getRemoteAssetChanges(User user, DateTime since) async {
     final deleted = await _apiService.auditApi
         .getAuditDeletes(EntityType.ASSET, since, userId: user.id);
-    if (deleted == null || deleted.needsFullSync) return (null, null);
+    if (deleted == null || deleted.needsFullSync) {
+      return (null, null, deleted?.timeOfRequest);
+    }
     final assetDto = await _apiService.assetApi
         .getAllAssets(userId: user.id, updatedAfter: since);
-    if (assetDto == null) return (null, null);
-    return (assetDto.map(Asset.remote).toList(), deleted.ids);
+    if (assetDto == null) return (null, null, deleted.timeOfRequest);
+    return (
+      assetDto.map(Asset.remote).toList(),
+      deleted.ids,
+      deleted.timeOfRequest
+    );
   }
 
   /// Returns `null` if the server state did not change, else list of assets

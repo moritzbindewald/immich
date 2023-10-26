@@ -162,7 +162,7 @@ void main() {
       final List<String> toDelete = ["2-1", "1-1"];
       final bool c = await s.syncRemoteAssetsToDb(
         owner,
-        (user, since) async => (toUpsert, toDelete),
+        (user, since) async => (toUpsert, toDelete, null),
         (user) => throw Exception(),
       );
       expect(c, true);
@@ -171,7 +171,8 @@ void main() {
   });
 }
 
-Future<(List<Asset>?, List<String>?)> _failDiff(User user, DateTime time) =>
-    Future.value((null, null));
+Future<(List<Asset>?, List<String>?, DateTime?)> _failDiff(
+        User user, DateTime time) =>
+    Future.value((null, null, null));
 
 class MockHashService extends Mock implements HashService {}
